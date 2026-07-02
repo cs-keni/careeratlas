@@ -1,26 +1,201 @@
 @import "tailwindcss";
 
+/* ────────────────────────────────────────────────────────────
+   CareerAtlas design tokens — "field atlas at night"
+   Ink grounds, brass accents, parchment text, per-path hues.
+   ──────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Grounds */
+  --ink-950: #0a0d12;
+  --ink-900: #10141c;
+  --ink-850: #141924;
+  --ink-800: #1a2130;
+  --ink-700: #26304290;
+  --line: rgba(201, 163, 83, 0.14);
+  --line-strong: rgba(201, 163, 83, 0.32);
+
+  /* Text */
+  --parchment: #eae4d3;
+  --parchment-dim: #b8b2a2;
+  --muted: #8b93a3;
+
+  /* Accents */
+  --brass: #c9a353;
+  --brass-bright: #e3c476;
+  --brass-glow: rgba(201, 163, 83, 0.22);
+
+  /* Path accents */
+  --path-technical: #7ba7d9;
+  --path-consulting: #c56b77;
+  --path-delivery: #e3b341;
+  --path-critical-infra: #4fb3a6;
+  --path-corporate: #9d8cd9;
+  --path-integration: #e08a4e;
+  --path-cyber: #6fcf97;
+
+  --background: var(--ink-950);
+  --foreground: var(--parchment);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-ink-950: var(--ink-950);
+  --color-ink-900: var(--ink-900);
+  --color-ink-850: var(--ink-850);
+  --color-ink-800: var(--ink-800);
+  --color-parchment: var(--parchment);
+  --color-parchment-dim: var(--parchment-dim);
+  --color-muted: var(--muted);
+  --color-brass: var(--brass);
+  --color-brass-bright: var(--brass-bright);
+
+  --color-path-technical: var(--path-technical);
+  --color-path-consulting: var(--path-consulting);
+  --color-path-delivery: var(--path-delivery);
+  --color-path-critical-infra: var(--path-critical-infra);
+  --color-path-corporate: var(--path-corporate);
+  --color-path-integration: var(--path-integration);
+  --color-path-cyber: var(--path-cyber);
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-plex-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--ink-950);
+  color: var(--parchment);
+  font-family: var(--font-archivo), sans-serif;
+  /* Atlas graticule: faint dotted grid + warm corner glow + vignette */
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201, 163, 83, 0.07), transparent 60%),
+    radial-gradient(rgba(201, 163, 83, 0.055) 1px, transparent 1px);
+  background-size: 100% 100%, 28px 28px;
+  background-attachment: fixed;
+}
+
+/* Film grain overlay for atmosphere */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--brass);
+  color: var(--ink-950);
+}
+
+/* ── Shared component recipes ── */
+
+.card {
+  background: linear-gradient(160deg, var(--ink-900), var(--ink-850));
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  transition: border-color 240ms ease, transform 240ms ease, box-shadow 240ms ease;
+}
+.card:hover {
+  border-color: var(--line-strong);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(201, 163, 83, 0.06);
+}
+
+.rune {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+}
+
+/* Corner ticks — cartographic frame detail for hero elements */
+.corner-ticks {
+  position: relative;
+}
+.corner-ticks::before,
+.corner-ticks::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--brass);
+  border-style: solid;
+  opacity: 0.55;
+}
+.corner-ticks::before {
+  top: -1px;
+  left: -1px;
+  border-width: 1px 0 0 1px;
+}
+.corner-ticks::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 1px 1px 0;
+}
+
+/* ── React Flow theming ── */
+.react-flow {
+  --xy-background-color: transparent;
+  --xy-attribution-background-color-default: transparent;
+}
+.react-flow__attribution a {
+  color: var(--muted);
+  opacity: 0.5;
+}
+.react-flow__edge-path {
+  stroke-opacity: 0.55;
+}
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke-opacity: 1;
+}
+.react-flow__controls {
+  background: var(--ink-900);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+.react-flow__controls-button {
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+}
+.react-flow__controls-button svg {
+  fill: var(--parchment-dim);
+}
+.react-flow__controls-button:hover {
+  background: var(--ink-800);
+}
+.react-flow__minimap {
+  background: var(--ink-900);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.react-flow__minimap svg {
+  background: var(--ink-900);
+}
+
+/* Custom scrollbar for the detail panel */
+.atlas-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.atlas-scroll::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 3px;
+}
+.atlas-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }

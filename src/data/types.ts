@@ -57,6 +57,8 @@ export interface CareerNode {
 export interface CareerPath {
   id: PathId;
   name: string;
+  /** Compact label for legends/filters. */
+  shortName: string;
   slug: string;
   tagline: string;
   /** CSS custom property name carrying this path's accent color. */

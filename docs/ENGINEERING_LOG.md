@@ -8,5 +8,17 @@
   BICSI RCDD) so the Certification Roadmap cites real eligibility rules instead of
   invented ones.
 - Created PHASES.md (6-phase plan) and docs/ (AI_CONTEXT, HANDOFF, CURRENT_TASK, this log).
-- Initial build of data model, design system, career tree, and all content pages — commit
-  hash to be added when committed.
+- Built the full site: data model + content (`src/data/` — 32 career nodes, 7 paths,
+  10 certifications with sources, 17 codex entries, 27 quests, SWE↔PSE comparison),
+  field-atlas design system (Tailwind v4 tokens in globals.css; Fraunces/Archivo/
+  IBM Plex Mono), React Flow skill tree with custom nodes + slide-in detail panel +
+  path filters, and all 7 routes (home, tree, paths index/detail, certifications,
+  codex, first-90-days, compare).
+- QA fixes found via headless-browser review: tree legend moved from canvas overlay
+  to a static bar (overlay hid the Jr PSE base node); minimap given hex node colors
+  (`pathHex`) and a dark SVG background (CSS vars don't resolve in SVG fills);
+  `shortName` added to CareerPath for compact legend labels.
+- Verified responsive behavior at 375px (hamburger nav, stacked hero, touch-usable
+  tree) and clean static production build (17 routes).
+- Commit: `b03de4a` — initial build on `main`. No git remote configured yet, so
+  the push step is pending until one is added.

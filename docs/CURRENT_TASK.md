@@ -1,11 +1,11 @@
 # CURRENT_TASK.md
 
-**Active task:** Initial build of CareerAtlas (all of PHASES.md Phases 1–5).
+**Active task:** none — initial build (Phases 1–5) completed 2026-07-02.
 
-- Owner: Claude Code
-- Started: 2026-07-02
-- Scope: scaffold, data model + full content data, design system, career tree,
-  all content pages (home, paths, certifications, codex, first-90-days, comparison),
-  motion polish, clean production build.
+Last completed: full CareerAtlas build — scaffold, data model + content for 32 roles /
+7 paths / 10 certs / 17 codex entries / 27 quests, field-atlas design system,
+React Flow skill tree with detail panel + path filters, all 7 page routes,
+motion polish, visual QA at desktop + mobile, clean static production build.
 
-**Next up after this:** Phase 6 backlog items (progress tracking, "My Build", light mode).
+**Next up:** Phase 6 backlog (see PHASES.md) — cert progress tracking, "My Build"
+saved routes, light mode, search, shareable node links.

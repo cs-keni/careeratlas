@@ -2,7 +2,23 @@
 
 Latest handoff notes between agents. Newest at top.
 
-## 2026-07-02 — Claude Code — Initial build (in progress)
+## 2026-07-02 — Claude Code — Initial build (COMPLETE)
+
+Build finished, visually QA'd (desktop + mobile via headless browser), `npm run build`
+clean — all 17 routes static. Everything below shipped as planned, with these deltas:
+
+- **Structure note:** the planned `MobileTreeList` was skipped — React Flow handles
+  touch pan/zoom well and the detail panel goes full-width on mobile. A list view
+  remains a Phase 6 option.
+- **Tree legend** is a static bar above the canvas (an overlay version hid the
+  base node); path `shortName` field added to `CareerPath` for it.
+- **Minimap** needs hex colors, not CSS vars (SVG fills) — hence `pathHex()` in
+  `src/lib/pathColors.ts` alongside `pathColor()`.
+- **Quest progress** (localStorage checkboxes + XP bar) shipped early in
+  `QuestRoadmap` — key: `careeratlas-quest-progress`.
+- Fonts landed as Fraunces / Archivo / IBM Plex Mono.
+
+## 2026-07-02 — Claude Code — Initial build plan (superseded, kept for context)
 
 Greenfield build of CareerAtlas per Kenny's full spec (see PHASES.md for plan and progress).
 
