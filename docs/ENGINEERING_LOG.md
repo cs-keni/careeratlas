@@ -20,5 +20,5 @@
   `shortName` added to CareerPath for compact legend labels.
 - Verified responsive behavior at 375px (hamburger nav, stacked hero, touch-usable
   tree) and clean static production build (17 routes).
-- Commit: `b03de4a` — initial build on `main`. No git remote configured yet, so
+- Commit: `a5f52c6` — initial build on `main`. No git remote configured yet, so
   the push step is pending until one is added.
