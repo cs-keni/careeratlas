@@ -48,24 +48,50 @@ Ships as 3 sequenced PRs. Deferred items moved to TODOS.md (list view, image
 export, salary workflow, shareable build links).
 
 ### PR 1 — Storage foundation, cert tracking, share links
-- [ ] Vitest + React Testing Library + jsdom test infra (`npm test`)
-- [ ] Shared `useStoredSet` hook (hydration guard, try/catch, writes outside setState updater)
+- [ ] Vitest + React Testing Library + jsdom test infra (`npm test`; mock ResizeObserver/DOMRect for React Flow)
+- [ ] Shared storage hooks: `useStoredSet` (quests) + `useStoredMap` (cert tri-state) — hydration guard, try/catch, writes outside setState updater
 - [ ] Versioned storage keys (`careeratlas:v1:*`), stable quest ids, one-time migration of legacy `careeratlas-quest-progress`
 - [ ] Content-graph validation suite (unique ids, nextRoles targets exist, no cycles, unique positions, cert sources present)
-- [ ] Cert progress tracking on /certifications via the hook
-- [ ] Share links: `/tree?node=<id>` — read on mount from location, validate against nodeById, write via replaceState, sync on popstate
+- [ ] Cert progress: tri-state Planned → In Progress → Earned (never "completed"); stored as `{certId: state}` map
+- [ ] Cert UI: discrete cycle-button in badge header next to medallion (NOT whole-card-clickable — cards contain links). Planned = brass outline ring; In Progress = pulsing half-fill; Earned = medallion fills level color + border brightens + brass shimmer
+- [ ] /certifications hierarchy: ASIS spine lights Earned segments + "N of M earned" rune counter at top; "saved in your browser" caption (quest pattern)
+- [ ] Share links: `/tree?node=<id>` — read on mount, validate vs nodeById, replaceState on select, popstate sync
+- [ ] Share arrival: camera pans/zooms to the node (animated) + detail panel opens. Invalid id: silent fallback to plain tree (specified — no toast)
+- [ ] Share creation: "Copy node link" control in node detail panel header; icon → checkmark micro-state, reverts ~1.2s; aria-live "Link copied"
+- [ ] Hydrate-then-animate on all tracked surfaces (no state pop-in)
 - [ ] Tests: storage hydrate/corrupt/migrate/toggle/quota, `?node=` valid/invalid, data integrity
 
 ### PR 2 — Light mode + search
-- [ ] `[data-theme="light"]` token block — full "atlas at day" art direction
-- [ ] Hardcoded color audit: minimap maskColor prop, pathHex light variants, body gradients, focus states, borders
-- [ ] Toggle + `prefers-color-scheme` default + no-flash pre-paint inline script; preference stored via v1 keys
-- [ ] Replace `background-attachment: fixed` with a fixed-position pseudo-element during the background rework
-- [ ] Search: grouped substring matching in `src/lib/searchIndex.ts` (roles/certs/codex/quests; title-before-body within groups; no library)
+- [ ] Light token block produced as a design artifact BEFORE implementation: every existing var name gets a day value from approved Variant A "Reading Room" (paper #f4edda, ink #2b2418, brass #8a6c2c — see ~/.gstack/projects/careeratlas/designs/tree-day-theme-20260703/). Includes 7 path accents at ≥4.5:1 on paper, line/glow alphas, warm shadows (never black-on-paper), grain + graticule recipes for paper, ::selection
+- [ ] Status tokens in BOTH themes: `--status-broken` (desaturated oxide red), `--status-ok` (verdigris) — atlas voice, no raw Tailwind reds
+- [ ] Contrast floor: body and muted text ≥4.5:1 in both themes
+- [ ] `[data-theme="light"]` retheme uses existing variable names (`--ink-*` → paper surfaces, `--parchment` → ink text) — not one-off colors
+- [ ] Hardcoded color audit: minimap maskColor via prop, pathHex light variants, body gradients, focus states, borders
+- [ ] Theme toggle: icon button right of nav (mobile: in menu sheet); `prefers-color-scheme` default; no-flash pre-paint inline script (try/catch → default dark); preference via v1 keys; ~300ms token cross-fade on toggle + day/night micro-animation; aria-pressed; skip cross-fade under prefers-reduced-motion
+- [ ] Replace `background-attachment: fixed` with fixed-position pseudo-element during background rework
+- [ ] Search entry: icon button in header (mobile: menu sheet); opens on `/` or Ctrl+K
+- [ ] Search overlay = "atlas index": centered panel, dimmed scrim, rune-style group headers (Roles / Certifications / Codex / Quests), dense result rows (path-colored dot + title + one-line context) — no per-result cards; empty groups omitted
+- [ ] Search states: pre-query hint; no-match: "Nothing charted here yet." + browse suggestion; keyboard nav (arrows/Enter/Esc), focus trap + return-to-trigger, listbox + aria-activedescendant
+- [ ] Search destinations: roles → `/tree?node=<id>` (reuses PR1); certs/codex/quests → anchor ids added to cards + scroll with brief brass highlight pulse on arrival
+- [ ] New flat utility recipes in globals.css: `.atlas-toolbar`, `.atlas-chip`, `.atlas-control`, `.atlas-result-row` — denser, no gradients/hover-shadows; `.card` stays reserved for content artifacts
+- [ ] Search logic: grouped substring matching in `src/lib/searchIndex.ts` (title-before-body within groups; no library)
+- [ ] Author DESIGN.md: atlas tokens (both themes), type scale, `.card` vs `.atlas-*` vocabulary, motion constants, atlas-native language rules
 - [ ] Tests: search empty/no-match/case/grouping; dual-theme visual QA on /tree
 
 ### PR 3 — My Build (route planner)
-- [ ] Edge-validated ordered route model (each hop via nextRoles), stored via v1 convention
-- [ ] Tree plan mode: highlight legal next hops while drawing a route
-- [ ] Stale-save repair: mark-don't-delete broken hops, repair UI with legal alternatives
-- [ ] Tests: route validation valid/broken-hop/removed-node/empty/duplicate
+- [ ] Edge-validated ordered route model (each hop via nextRoles), stored via v1 convention as single-element keyed collection `{routes:[…]}` — v1 UI is ONE route; multi-route later is pure UI, no migration
+- [ ] Mode entry: segmented control "Explore | My Build" at right end of legend bar; plan mode swaps path chips for a slim route rail (ordered hop chips + undo / clear / exit) — no new vertical chrome, no side panel
+- [ ] First-entry empty state: banner "Start from your current role — tap a glowing node to chart the next hop"; base node auto-highlighted
+- [ ] State precedence on canvas: route > selected > filter-dim. Legal next hops: brass pulse ring; non-legal: existing dimmed treatment; route edges: solid brass, full opacity
+- [ ] Saved route draws in with staggered edge reveal on load (loading artifact → moment)
+- [ ] Stale-save repair: broken hop drawn as dashed `--status-broken` edge; calm repair drawer ("This route has changed since you charted it") listing legal alternatives; mark-don't-delete, never auto-remove
+- [ ] Mobile (< md): plan mode renders as a stepper list — current route as stacked hop chips, next-hop choices as full-width 44px tappable rows; same validation module drives both presentations
+- [ ] Desktop keyboard: legal hops Tab/Enter reachable; route rail chips ≥44px touch targets
+- [ ] Completion moment: route reaching a target node gets one restrained brass shimmer (same treatment as cert Earned — reused, not reinvented)
+- [ ] Tests: route validation valid/broken-hop/removed-node/empty/duplicate; stepper renders same route state as canvas
+
+### Phase 6 design constants (from /plan-design-review, 2026-07-03)
+- Approved day palette: Variant A "Reading Room" (sketch + approved.json in ~/.gstack/projects/careeratlas/designs/tree-day-theme-20260703/)
+- Language is atlas-native everywhere: Tracked/Planned/Earned, "chart", "charted" — never SaaS "completed/done"
+- One celebration treatment (brass shimmer) reused at: final quest check, cert Earned, route completion
+- Focus-visible rings in brass on every new interactive element

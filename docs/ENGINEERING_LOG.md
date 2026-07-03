@@ -17,6 +17,17 @@
   library); My Build as edge-validated routes with mark-don't-delete repair;
   Vitest + RTL infra and a content-graph validation suite land in PR1. Test
   plan artifact written to ~/.gstack/projects/careeratlas/ for /qa.
+- Phase 6 design review completed (/plan-design-review + Codex/Claude outside
+  voices; design completeness 4/10 → 9/10). Day palette approved: Variant A
+  "Reading Room" (paper #f4edda, ink #2b2418, brass #8a6c2c; sketch in
+  ~/.gstack/projects/careeratlas/designs/tree-day-theme-20260703/). PHASES.md
+  Phase 6 rewritten as a full UX contract: cert tracking is tri-state
+  Planned/In Progress/Earned (map storage, brighten-not-dim), share links get
+  camera-pan arrival + copy-link affordance, search is an "atlas index"
+  overlay (icon button + / or Ctrl+K), My Build is a legend-bar mode with
+  route rail + mobile stepper list, status tokens (oxide/verdigris) added to
+  the system, full a11y package, light tokens produced as an artifact before
+  PR2, DESIGN.md authored in PR2. TODOS.md gains multi-route upgrade entry.
 
 ## 2026-07-02
 

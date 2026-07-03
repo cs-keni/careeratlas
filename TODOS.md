@@ -27,6 +27,14 @@ Items added by /plan-eng-review on 2026-07-03 (Phase 6 planning).
 - **Context:** Reclassified from app feature to docs/process task during Phase 6 planning (decision D3). Belongs in `docs/`, not a PR.
 - **Depends on / blocked by:** Nothing.
 
+## Multi-route My Build upgrade
+- **What:** Named multiple saved routes with a routes drawer (list / rename / delete / switch) in the `.atlas-*` utility vocabulary.
+- **Why:** Comparing alternate futures (technical vs leadership track) is the natural power-use of a career atlas.
+- **Pros:** Storage already future-proofed — v1 stores `{routes:[…]}` as a single-element collection (decision 10A, /plan-design-review 2026-07-03), so this is pure UI, zero migration.
+- **Cons:** Full CRUD surface (naming, switching, deleting) for a tool with one known user.
+- **Context:** v1 (PR3) deliberately ships ONE route with "Clear and re-chart" as the whole management story. Pick this up only when an actual need to compare routes appears.
+- **Depends on / blocked by:** PR3 (My Build) shipped.
+
 ## Shareable My Build links
 - **What:** Encode a saved route in the URL (e.g. `/tree?build=jr-pse.pse.tech-lead`) so a build can be shared without a backend.
 - **Why:** Share links only share a single node (Codex outside-voice finding); sharing a whole planned route is the natural extension — the URL is the transport.
