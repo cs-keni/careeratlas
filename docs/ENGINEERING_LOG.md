@@ -1,5 +1,11 @@
 # ENGINEERING_LOG.md
 
+## 2026-07-03
+
+- Added gstack skill routing rules to CLAUDE.md so agent requests auto-route to the
+  right slash skill (/investigate for bugs, /ship for deploys, etc.). Config-only
+  change, no code touched.
+
 ## 2026-07-02
 
 - Project inception. Scaffolded Next.js 15 + TS + Tailwind v4 (App Router, src dir),
