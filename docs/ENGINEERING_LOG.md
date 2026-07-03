@@ -4,7 +4,10 @@
 
 - Added gstack skill routing rules to CLAUDE.md so agent requests auto-route to the
   right slash skill (/investigate for bugs, /ship for deploys, etc.). Config-only
-  change, no code touched.
+  change, no code touched. Commit: `77c656d`.
+- Vercel import complete (Kenny, via dashboard). Every push to `main` now
+  auto-deploys. Note: `careeratlas.vercel.app` belongs to an unrelated project;
+  our deployment lives under a different Vercel project URL.
 
 ## 2026-07-02
 
