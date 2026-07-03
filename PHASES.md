@@ -41,12 +41,31 @@ starting from Jr Physical Security Engineer at Jacobs, Portland OR.
 - [x] Responsive pass (mobile nav verified, hero/cards stack, tree usable via touch)
 - [x] Build passes clean (`npm run build`)
 
-## Phase 6 — Future Enhancements (backlog)
-- [ ] List-based tree view as an alternate mobile presentation
+## Phase 6 — Interactive Layer (plan locked by /plan-eng-review, 2026-07-03)
 - [x] Quest progress tracking (localStorage) — shipped early in Phase 4
-- [ ] Cert progress tracking (mark badges earned, localStorage)
-- [ ] "My Build" — save a planned route through the tree
-- [ ] Light mode toggle
-- [ ] Salary data refresh workflow + more regional data
-- [ ] Search across roles/certs/tools
-- [ ] Export tree as image / share links to nodes
+
+Ships as 3 sequenced PRs. Deferred items moved to TODOS.md (list view, image
+export, salary workflow, shareable build links).
+
+### PR 1 — Storage foundation, cert tracking, share links
+- [ ] Vitest + React Testing Library + jsdom test infra (`npm test`)
+- [ ] Shared `useStoredSet` hook (hydration guard, try/catch, writes outside setState updater)
+- [ ] Versioned storage keys (`careeratlas:v1:*`), stable quest ids, one-time migration of legacy `careeratlas-quest-progress`
+- [ ] Content-graph validation suite (unique ids, nextRoles targets exist, no cycles, unique positions, cert sources present)
+- [ ] Cert progress tracking on /certifications via the hook
+- [ ] Share links: `/tree?node=<id>` — read on mount from location, validate against nodeById, write via replaceState, sync on popstate
+- [ ] Tests: storage hydrate/corrupt/migrate/toggle/quota, `?node=` valid/invalid, data integrity
+
+### PR 2 — Light mode + search
+- [ ] `[data-theme="light"]` token block — full "atlas at day" art direction
+- [ ] Hardcoded color audit: minimap maskColor prop, pathHex light variants, body gradients, focus states, borders
+- [ ] Toggle + `prefers-color-scheme` default + no-flash pre-paint inline script; preference stored via v1 keys
+- [ ] Replace `background-attachment: fixed` with a fixed-position pseudo-element during the background rework
+- [ ] Search: grouped substring matching in `src/lib/searchIndex.ts` (roles/certs/codex/quests; title-before-body within groups; no library)
+- [ ] Tests: search empty/no-match/case/grouping; dual-theme visual QA on /tree
+
+### PR 3 — My Build (route planner)
+- [ ] Edge-validated ordered route model (each hop via nextRoles), stored via v1 convention
+- [ ] Tree plan mode: highlight legal next hops while drawing a route
+- [ ] Stale-save repair: mark-don't-delete broken hops, repair UI with legal alternatives
+- [ ] Tests: route validation valid/broken-hop/removed-node/empty/duplicate

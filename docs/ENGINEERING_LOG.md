@@ -8,6 +8,15 @@
 - Vercel import complete (Kenny, via dashboard). Every push to `main` now
   auto-deploys. Note: `careeratlas.vercel.app` belongs to an unrelated project;
   our deployment lives under a different Vercel project URL.
+- Phase 6 engineering review completed (/plan-eng-review + Codex outside voice).
+  Rescoped to 3 sequenced PRs; PHASES.md rewritten, TODOS.md created. Key
+  decisions: shared `useStoredSet` hook with versioned keys (`careeratlas:v1:*`),
+  stable quest ids + legacy-key migration; share links via location/replaceState
+  + popstate (not useSearchParams); full "atlas at day" light theme with
+  hardcoded-color audit; grouped-substring search in a testable lib module (no
+  library); My Build as edge-validated routes with mark-don't-delete repair;
+  Vitest + RTL infra and a content-graph validation suite land in PR1. Test
+  plan artifact written to ~/.gstack/projects/careeratlas/ for /qa.
 
 ## 2026-07-02
 
