@@ -48,18 +48,18 @@ Ships as 3 sequenced PRs. Deferred items moved to TODOS.md (list view, image
 export, salary workflow, shareable build links).
 
 ### PR 1 — Storage foundation, cert tracking, share links
-- [ ] Vitest + React Testing Library + jsdom test infra (`npm test`; mock ResizeObserver/DOMRect for React Flow)
-- [ ] Shared storage hooks: `useStoredSet` (quests) + `useStoredMap` (cert tri-state) — hydration guard, try/catch, writes outside setState updater
-- [ ] Versioned storage keys (`careeratlas:v1:*`), stable quest ids, one-time migration of legacy `careeratlas-quest-progress`
-- [ ] Content-graph validation suite (unique ids, nextRoles targets exist, no cycles, unique positions, cert sources present)
-- [ ] Cert progress: tri-state Planned → In Progress → Earned (never "completed"); stored as `{certId: state}` map
-- [ ] Cert UI: discrete cycle-button in badge header next to medallion (NOT whole-card-clickable — cards contain links). Planned = brass outline ring; In Progress = pulsing half-fill; Earned = medallion fills level color + border brightens + brass shimmer
-- [ ] /certifications hierarchy: ASIS spine lights Earned segments + "N of M earned" rune counter at top; "saved in your browser" caption (quest pattern)
-- [ ] Share links: `/tree?node=<id>` — read on mount, validate vs nodeById, replaceState on select, popstate sync
-- [ ] Share arrival: camera pans/zooms to the node (animated) + detail panel opens. Invalid id: silent fallback to plain tree (specified — no toast)
-- [ ] Share creation: "Copy node link" control in node detail panel header; icon → checkmark micro-state, reverts ~1.2s; aria-live "Link copied"
-- [ ] Hydrate-then-animate on all tracked surfaces (no state pop-in)
-- [ ] Tests: storage hydrate/corrupt/migrate/toggle/quota, `?node=` valid/invalid, data integrity
+- [x] Vitest + React Testing Library + jsdom test infra (`npm test`; mock ResizeObserver/DOMRect for React Flow)
+- [x] Shared storage hooks: `useStoredSet` (quests) + `useStoredMap` (cert tri-state) — hydration guard, try/catch, writes outside setState updater
+- [x] Versioned storage keys (`careeratlas:v1:*`), stable quest ids, one-time migration of legacy `careeratlas-quest-progress`
+- [x] Content-graph validation suite (unique ids, nextRoles targets exist, no cycles, unique positions, cert sources present)
+- [x] Cert progress: tri-state Planned → In Progress → Earned (never "completed"); stored as `{certId: state}` map
+- [x] Cert UI: discrete cycle-button in badge header next to medallion (NOT whole-card-clickable — cards contain links). Planned = brass outline ring; In Progress = pulsing half-fill; Earned = medallion fills level color + border brightens + brass shimmer
+- [x] /certifications hierarchy: ASIS spine lights Earned segments + "N of M earned" rune counter at top; "saved in your browser" caption (quest pattern)
+- [x] Share links: `/tree?node=<id>` — read on mount, validate vs nodeById, replaceState on select, popstate sync
+- [x] Share arrival: camera pans/zooms to the node (animated) + detail panel opens. Invalid id: silent fallback to plain tree (specified — no toast)
+- [x] Share creation: "Copy node link" control in node detail panel header; icon → checkmark micro-state, reverts ~1.2s; aria-live "Link copied"
+- [x] Hydrate-then-animate on all tracked surfaces (no state pop-in)
+- [x] Tests: storage hydrate/corrupt/migrate/toggle/quota, `?node=` valid/invalid, data integrity
 
 ### PR 2 — Light mode + search
 - [ ] Light token block produced as a design artifact BEFORE implementation: every existing var name gets a day value from approved Variant A "Reading Room" (paper #f4edda, ink #2b2418, brass #8a6c2c — see ~/.gstack/projects/careeratlas/designs/tree-day-theme-20260703/). Includes 7 path accents at ≥4.5:1 on paper, line/glow alphas, warm shadows (never black-on-paper), grain + graticule recipes for paper, ::selection
