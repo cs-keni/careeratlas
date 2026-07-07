@@ -1,4 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import type { Certification } from "@/data/types";
+import {
+  certProgressLabels,
+  nextCertProgress,
+  type CertProgress,
+} from "@/lib/certProgress";
 
 const levelStyles: Record<Certification["level"], { label: string; color: string }> = {
   foundation: { label: "Foundation", color: "var(--path-cyber)" },
@@ -22,19 +30,95 @@ function DifficultyPips({ level, color }: { level: number; color: string }) {
   );
 }
 
-export function CertificationBadge({ cert }: { cert: Certification }) {
+/** Medallion treatment per tracking state — brighten, never dim. */
+function medallionStyle(color: string, progress: CertProgress | undefined) {
+  switch (progress) {
+    case "planned":
+      return {
+        borderColor: color,
+        color,
+        boxShadow: `0 0 0 3px var(--ink-950), 0 0 0 5px var(--brass), 0 0 20px -6px ${color}`,
+      };
+    case "earned":
+      return {
+        background: color,
+        borderColor: "var(--brass-bright)",
+        color: "var(--ink-950)",
+        boxShadow: `0 0 26px -4px ${color}`,
+      };
+    default:
+      return { borderColor: color, color, boxShadow: `0 0 20px -6px ${color}` };
+  }
+}
+
+export function CertificationBadge({
+  cert,
+  progress,
+  onCycle,
+}: {
+  cert: Certification;
+  /** Current tracking state; undefined = untracked. */
+  progress?: CertProgress;
+  /** Cycle handler; omit to render the badge read-only. */
+  onCycle?: (next: CertProgress | null) => void;
+}) {
   const { label, color } = levelStyles[cert.level];
+  // Shimmer fires only on the user's own Earned click — never on hydration,
+  // so a page load with stored progress renders at rest (no state pop-in).
+  const [justEarned, setJustEarned] = useState(false);
+
+  const next = nextCertProgress(progress);
+  const cycle = () => {
+    if (!onCycle) return;
+    setJustEarned(next === "earned");
+    onCycle(next);
+  };
 
   return (
     <article className="card group flex flex-col p-6">
       <div className="flex items-start justify-between gap-4">
-        {/* The badge medallion */}
-        <div
-          className="grid h-14 w-14 shrink-0 place-items-center rounded-full border-2 text-2xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6"
-          style={{ borderColor: color, color, boxShadow: `0 0 20px -6px ${color}` }}
-          aria-hidden
-        >
-          {cert.badge}
+        {/* The badge medallion + tracking control */}
+        <div className="flex flex-col items-center gap-2">
+          <div
+            className={`relative grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border-2 text-2xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 ${
+              justEarned && progress === "earned" ? "brass-shimmer" : ""
+            }`}
+            style={medallionStyle(color, progress)}
+            aria-hidden
+          >
+            {progress === "in-progress" && (
+              <span
+                className="status-breathe absolute inset-0"
+                style={{ background: `linear-gradient(to top, ${color} 50%, transparent 50%)` }}
+              />
+            )}
+            <span className="relative">{cert.badge}</span>
+          </div>
+          {onCycle && (
+            <button
+              type="button"
+              onClick={cycle}
+              aria-label={
+                progress
+                  ? `${cert.name} is ${certProgressLabels[progress]}. ${
+                      next ? `Mark as ${certProgressLabels[next]}` : "Clear tracking"
+                    }.`
+                  : `Track ${cert.name}. Mark as Planned.`
+              }
+              className="focus-brass rune rounded-full border px-2.5 py-1 transition-colors hover:border-[var(--brass)]"
+              style={{
+                borderColor: progress ? "var(--brass)" : "var(--line-strong)",
+                color:
+                  progress === "earned"
+                    ? "var(--brass-bright)"
+                    : progress
+                      ? "var(--brass)"
+                      : "var(--muted)",
+              }}
+            >
+              {progress ? certProgressLabels[progress] : "Track"}
+            </button>
+          )}
         </div>
         <div className="flex flex-col items-end gap-2">
           <span className="rune rounded-full border px-2.5 py-1" style={{ borderColor: color, color }}>
