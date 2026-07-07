@@ -1,41 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { questPhases } from "@/data/quests";
-
-const STORAGE_KEY = "careeratlas-quest-progress";
-
-function questKey(phaseId: string, title: string) {
-  return `${phaseId}::${title}`;
-}
+import {
+  LEGACY_QUEST_PROGRESS_KEY,
+  migrateLegacyQuestProgress,
+  questPhases,
+} from "@/data/quests";
+import { QUEST_PROGRESS_KEY, useStoredSet } from "@/lib/storage";
 
 export function QuestRoadmap() {
-  const [done, setDone] = useState<Set<string>>(new Set());
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setDone(new Set(JSON.parse(raw) as string[]));
-    } catch {
-      // corrupted storage — start fresh
-    }
-    setHydrated(true);
-  }, []);
-
-  const toggle = (key: string) => {
-    setDone((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...next]));
-      return next;
-    });
-  };
+  const { values: done, toggle, hydrated } = useStoredSet(QUEST_PROGRESS_KEY, {
+    migrateLegacy: { key: LEGACY_QUEST_PROGRESS_KEY, transform: migrateLegacyQuestProgress },
+  });
 
   const totalQuests = questPhases.reduce((n, p) => n + p.quests.length, 0);
-  const completed = done.size;
+  // Count only stored ids that still exist in the current questline — a raw
+  // `done.size` would count stale ids (content edits, legacy migration) and can
+  // read past 100%. Mirrors the per-phase filter below and the cert counter.
+  const completed = questPhases.reduce(
+    (n, p) => n + p.quests.filter((q) => done.has(q.id)).length,
+    0,
+  );
 
   return (
     <div>
@@ -44,7 +29,7 @@ export function QuestRoadmap() {
         <div className="flex items-baseline justify-between">
           <p className="rune text-brass">Questline Progress</p>
           <p className="font-mono text-sm text-parchment">
-            {hydrated ? completed : 0} / {totalQuests} complete
+            {hydrated ? completed : 0} / {totalQuests} charted
           </p>
         </div>
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-ink-800">
@@ -57,14 +42,14 @@ export function QuestRoadmap() {
           />
         </div>
         <p className="mt-2 text-xs text-muted">
-          Progress is saved in your browser. Check quests off as you complete them.
+          Progress is saved in your browser. Chart quests as you finish them.
         </p>
       </div>
 
       {/* Phase timeline */}
       <ol className="relative space-y-10 border-l border-[var(--line-strong)] pl-6 sm:pl-8">
         {questPhases.map((phase, phaseIndex) => {
-          const phaseDone = phase.quests.filter((q) => done.has(questKey(phase.id, q.title))).length;
+          const phaseDone = phase.quests.filter((q) => done.has(q.id)).length;
           const allDone = phaseDone === phase.quests.length;
           return (
             <motion.li
@@ -94,12 +79,12 @@ export function QuestRoadmap() {
 
               <ul className="mt-4 space-y-2">
                 {phase.quests.map((quest) => {
-                  const key = questKey(phase.id, quest.title);
-                  const isDone = done.has(key);
+                  const isDone = done.has(quest.id);
                   return (
-                    <li key={key}>
+                    <li key={quest.id}>
                       <button
-                        onClick={() => toggle(key)}
+                        onClick={() => toggle(quest.id)}
+                        aria-pressed={isDone}
                         className={`card flex w-full items-start gap-3 p-4 text-left transition-opacity ${
                           isDone ? "opacity-55" : ""
                         }`}

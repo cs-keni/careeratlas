@@ -1,11 +1,15 @@
 # CURRENT_TASK.md
 
-**Active task:** none — initial build (Phases 1–5) completed 2026-07-02.
+**Active task:** Phase 6 PR1 — implemented and /review-complete on
+`phase6/pr1-storage-foundation`, awaiting /ship (2026-07-07).
 
-Last completed: full CareerAtlas build — scaffold, data model + content for 32 roles /
-7 paths / 10 certs / 17 codex entries / 27 quests, field-atlas design system,
-React Flow skill tree with detail panel + path filters, all 7 page routes,
-motion polish, visual QA at desktop + mobile, clean static production build.
+All PHASES.md § PR 1 boxes checked. /review (7 passes incl. Codex, gate PASS)
+hardened the storage/migration layer against data loss, added router-driven
+`?node=` sync + keyboard node selection + Escape-to-close, reduced-motion
+camera pan, atlas-native quest copy, and first CI workflow. 42/42 tests, lint
+clean, build clean (17 routes). A live re-QA of the tree page (/qa) is
+recommended before or during /ship since CareerTree changed after the last
+browse-daemon pass.
 
-**Next up:** Phase 6 backlog (see PHASES.md) — cert progress tracking, "My Build"
-saved routes, light mode, search, shareable node links.
+**Next up:** /ship PR1, then PR2 (light theme + search) — produce the light
+token artifact BEFORE implementation, per PHASES.md § PR 2.

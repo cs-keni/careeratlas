@@ -80,6 +80,9 @@ export interface CareerPath {
 export type CertLevel = "foundation" | "professional" | "expert" | "adjacent" | "vendor";
 
 export interface Certification {
+  /** Stable, globally unique id — cert progress is stored against this
+   * (careeratlas:v1:cert-progress), so never reuse or repurpose an id once
+   * shipped (retire it instead). */
   id: string;
   /** Short name, e.g. "PSP". */
   name: string;
@@ -120,6 +123,9 @@ export interface CodexEntry {
 export type QuestType = "main" | "side";
 
 export interface Quest {
+  /** Stable, globally unique id — progress is stored against this, so never
+   * reuse or repurpose an id once shipped (retire it instead). */
+  id: string;
   title: string;
   detail: string;
   type: QuestType;

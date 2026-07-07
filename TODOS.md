@@ -1,7 +1,24 @@
 # TODOS.md
 
 Deferred work with full context, so a future session can pick any item up cold.
-Items added by /plan-eng-review on 2026-07-03 (Phase 6 planning).
+Items added by /plan-eng-review on 2026-07-03 (Phase 6 planning); PR1 /review
+items added 2026-07-07.
+
+## Multi-tab storage sync (known limitation, accepted for v1)
+- **What:** `useStoredSet`/`useStoredMap` hold a full in-memory snapshot per tab and persist last-write-wins; a `storage`-event listener would re-sync tabs.
+- **Why:** Toggling progress in two open tabs can silently lose the other tab's change (both Claude and Codex flagged this in the PR1 /review, 2026-07-07).
+- **Pros:** `storage` events are the standard fix; the hooks are already the single chokepoint, so the listener lands in one file.
+- **Cons:** Reconciling a Set/Record snapshot mid-interaction has UX edge cases (state changing under an open page) for a site with one known user.
+- **Context:** Deliberately documented instead of built during the PR1 review. The hooks already persist only user mutations (dirty flag), which narrows the clobber window.
+- **Depends on / blocked by:** Nothing.
+
+## Node detail panel focus management
+- **What:** Move focus into `CareerNodeCard` when it opens (incl. programmatic deep-link opens), restore focus on close, and consider `role="dialog"` + `aria-label`.
+- **Why:** The panel overlays the tree with no AT indication it opened (PR1 /review red-team finding, 2026-07-07). Escape-to-close and keyboard node selection (`onSelectionChange`) shipped in PR1; focus management is the remaining piece.
+- **Pros:** Completes the keyboard story the PR1 fixes started; standard dialog pattern.
+- **Cons:** Focus-restore interacts with React Flow's own focus handling — needs live AT testing, not just jsdom.
+- **Context:** PR3's plan-mode keyboard work ("legal hops Tab/Enter reachable") touches the same surface — natural time to do both.
+- **Depends on / blocked by:** Nothing; pairs well with PR3.
 
 ## List-based mobile tree view
 - **What:** An alternate list presentation of the career tree for small screens.

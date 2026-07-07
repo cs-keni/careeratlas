@@ -1,6 +1,64 @@
 # ENGINEERING_LOG.md
 
+## 2026-07-07
+
+- **PR1 /review completed** (7 passes: critical checklist, 4 specialists,
+  Claude adversarial, Codex adversarial + structured; Codex gate PASS) and all
+  findings actioned on `phase6/pr1-storage-foundation`. Storage hardening
+  (cross-model top finding): `write()` now reports success and the legacy
+  quest key is deleted only after a confirmed v1 write (failed write ⇒
+  migration retries next load); `readRaw` distinguishes absent vs invalid so
+  a corrupt v1 key never re-triggers migration from stale legacy data; hooks
+  persist only after a user mutation (dirty flag) so corrupt-but-recoverable
+  stored bytes survive page loads; mutations before hydration are ignored;
+  `useStoredMap` rejects array-shaped values. Share links: new `NodeParamSync`
+  child (useSearchParams inside its own Suspense — tree stays out of the
+  boundary, decision 2A intact) reconciles same-segment Next navigations
+  (header link now clears panel + PR2 search destinations will open it);
+  `onSelectionChange` makes keyboard Enter/Space/Escape node selection drive
+  the panel/URL (React Flow never calls onNodeClick from keyboard); Escape
+  closes the panel; camera pan respects prefers-reduced-motion. Polish: quest
+  copy is atlas-native ("charted"), earned counter no longer announces the
+  hydration 0→N flip to screen readers, brass-shimmer uses the
+  --brass-bright token via color-mix, sorted certs hoisted to module scope,
+  `LEGACY_QUEST_PROGRESS_KEY` exported from quests.ts, COPY_RESET_MS named,
+  Certification.id documented as storage identity. Tests 31 → 42 (migration
+  failure paths, corrupt v1/legacy, URL write/clear, Escape, clipboard
+  rejection, read-only badge, array-shape map, spine-id integrity; counts now
+  derived from data). Added `.github/workflows/ci.yml` (lint + test + build)
+  — the repo's first CI. TODOS.md gained multi-tab sync (accepted limitation)
+  and panel focus management. Lint clean, 42/42 tests, build clean (17
+  routes, /tree still static).
+
 ## 2026-07-03
+
+- **Phase 6 PR1 implemented** on branch `phase6/pr1-storage-foundation` (5 WIP
+  commits; /ship will squash). Test infra: Vitest + RTL + jsdom with
+  ResizeObserver/DOMMatrixReadOnly/DOMRect/IntersectionObserver stubs in
+  `vitest.setup.ts` (React Flow + framer-motion whileInView need them);
+  `npm test` runs 31 tests. Used Vite's native `resolve.tsconfigPaths` instead
+  of the deprecated vite-tsconfig-paths plugin. Storage: `src/lib/storage.ts`
+  ships `useStoredSet`/`useStoredMap` (versioned `careeratlas:v1:*` keys,
+  hydration guard, try/catch reads/writes in effects outside setState updaters,
+  one-time legacy migration that removes the old key). Quests: stable ids on
+  all 27 quests (`w1-*`…`y1-*`), `migrateLegacyQuestProgress` maps old
+  `phaseId::title` entries and drops unknowns; QuestRoadmap rewired. Data:
+  content-graph integrity suite (unique ids, nextRoles exist, DAG check, unique
+  positions, cert sources, quest-id uniqueness). Certs: tri-state
+  Planned → In Progress → Earned via one `useStoredMap` in the new
+  `CertificationsIndex` client shell (single hook instance so badges never
+  race); cycle button in badge header; medallion states (brass ring / breathing
+  half-fill / filled + one-shot shimmer, never on hydration); ASIS spine lights
+  Earned segments + "N of 10 earned" counter. Tree: `/tree?node=<id>` share
+  links via location+replaceState+popstate (deliberately not useSearchParams),
+  camera `setCenter` pan on arrival/popstate only, silent fallback on bad ids,
+  "Copy node link" with ✓ micro-state + aria-live. New globals.css recipes:
+  `brass-shimmer`, `status-breathe`, `.focus-brass`, all reduced-motion-aware.
+  Verified live via browse daemon: migration, toggle persistence, cert cycle +
+  reload, share arrival/pan, URL sync, invalid-id fallback, corrupt-storage
+  recovery. `npm test` 31/31, lint clean, `npm run build` clean (17 routes).
+  Note: headless daemon denies clipboard-write permission (env limitation);
+  copy flow verified with a stubbed clipboard + trusted click.
 
 - Added gstack skill routing rules to CLAUDE.md so agent requests auto-route to the
   right slash skill (/investigate for bugs, /ship for deploys, etc.). Config-only

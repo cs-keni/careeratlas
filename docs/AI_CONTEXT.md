@@ -17,6 +17,8 @@ core message.
 - Tailwind CSS v4 (CSS-config via `@theme` in `globals.css`, NOT tailwind.config)
 - Framer Motion (animations)
 - @xyflow/react (React Flow v12) for the career tree graph
+- Vitest + React Testing Library + jsdom (`npm test`; browser API stubs live in
+  `vitest.setup.ts` — React Flow and framer-motion need them)
 - Fonts via `next/font/google`: Fraunces (display), Newsreader (editorial accents if used),
   body sans + IBM Plex Mono (stat blocks) — see `src/app/layout.tsx` for the source of truth
 
@@ -31,7 +33,34 @@ All content lives in static, hand-editable TypeScript files under `src/data/`:
 - `comparison.ts` — SWE → PSE role mapping
 
 Adding a role = add a node to `careerNodes.ts` with an id, path, tier, and position.
-Edges are derived from each node's `nextRoles`.
+Edges are derived from each node's `nextRoles`. A content-graph integrity test
+suite (`src/data/__tests__/integrity.test.ts`) enforces unique ids, valid
+nextRoles, acyclicity, unique positions, and cert sources — run `npm test`
+after any data edit.
+
+## Client persistence (Phase 6 PR1)
+- All progress lives in localStorage under versioned `careeratlas:v1:*` keys via
+  `src/lib/storage.ts` (`useStoredSet` for quest checkmarks, `useStoredMap` for
+  cert tri-state; route plans reuse this in PR3).
+- Only ONE hook instance per key per page — a page-level client component owns
+  the hook and feeds presentational children (see `CertificationsIndex`).
+- Quest ids in `quests.ts` are storage identity: stable forever, never reused.
+  Cert ids too (`Certification.id`). The pre-v1 `careeratlas-quest-progress`
+  title-keyed format migrates once; the legacy key is deleted only after the
+  v1 write is CONFIRMED (failed write ⇒ retry next load).
+- Hooks persist only user mutations (dirty flag) — hydrated state is never
+  written back, and mutations before hydration are ignored. Migration runs
+  only when the v1 key is truly absent, never over a corrupt v1 value.
+- Cert states are atlas-native: `planned | in-progress | earned`
+  (`src/lib/certProgress.ts`) — never "completed". Quest copy says "charted".
+- Share links: `/tree?node=<id>` handled inside `CareerTree` with plain
+  location + replaceState + popstate for its own writes, PLUS a tiny
+  `NodeParamSync` child (`useSearchParams` in its own `<Suspense>`) that
+  reconciles router-driven navigations — same-segment `<Link>`s fire neither
+  remount nor popstate. The tree itself stays outside the Suspense boundary;
+  /tree still prerenders static. Invalid ids silently fall back. Keyboard
+  selection goes through React Flow's `onSelectionChange` (its keyboard path
+  never calls `onNodeClick`); Escape closes the panel.
 
 ## Key decisions
 - Salary ranges and years-of-experience are ESTIMATES and must always be labeled as such in UI.

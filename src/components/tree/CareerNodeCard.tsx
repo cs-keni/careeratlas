@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import type { CareerNode } from "@/data/types";
@@ -18,6 +19,9 @@ const looseCertLabels: Record<string, string> = {
 function certLabel(id: string): string {
   return certById.get(id)?.name ?? looseCertLabels[id] ?? id;
 }
+
+/** How long the copy button shows its ✓ before reverting. */
+const COPY_RESET_MS = 1200;
 
 function Section({ title, items, color }: { title: string; items?: string[]; color: string }) {
   if (!items?.length) return null;
@@ -50,6 +54,36 @@ export function CareerNodeCard({
   const color = pathColor(role.path);
   const path = role.path !== "shared" ? pathById.get(role.path) : undefined;
 
+  // Copy-link micro-state: icon flips to a checkmark, reverts after COPY_RESET_MS.
+  // The aside is keyed by role.id, so switching nodes resets this naturally.
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), COPY_RESET_MS);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
+  const copyLink = async () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("node", role.id);
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      setCopied(true);
+    } catch {
+      // clipboard unavailable (permissions, http) — leave the icon as-is
+    }
+  };
+
+  // Escape closes the panel from anywhere — React Flow only handles Escape
+  // while a node has focus, and a deep-linked panel has no focused node.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
   return (
     <motion.aside
       key={role.id}
@@ -62,14 +96,28 @@ export function CareerNodeCard({
       <div className="corner-ticks m-4 rounded-lg border border-[var(--line)] bg-ink-900/60 p-5">
         <div className="flex items-start justify-between gap-3">
           <TierBadge tier={role.tier} color={color} />
-          <button
-            onClick={onClose}
-            aria-label="Close details"
-            className="grid h-8 w-8 place-items-center rounded border border-[var(--line)] font-mono text-muted transition-colors hover:border-[var(--line-strong)] hover:text-parchment"
-          >
-            ×
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={copyLink}
+              aria-label="Copy node link"
+              title="Copy node link"
+              className="focus-brass grid h-8 w-8 place-items-center rounded border border-[var(--line)] font-mono transition-colors hover:border-[var(--line-strong)]"
+              style={{ color: copied ? "var(--brass-bright)" : "var(--muted)" }}
+            >
+              {copied ? "✓" : "⧉"}
+            </button>
+            <button
+              onClick={onClose}
+              aria-label="Close details"
+              className="focus-brass grid h-8 w-8 place-items-center rounded border border-[var(--line)] font-mono text-muted transition-colors hover:border-[var(--line-strong)] hover:text-parchment"
+            >
+              ×
+            </button>
+          </div>
         </div>
+        <span aria-live="polite" className="sr-only">
+          {copied ? "Link copied" : ""}
+        </span>
 
         <h2 className="mt-3 font-display text-2xl leading-tight text-parchment">{role.title}</h2>
         {path && (
